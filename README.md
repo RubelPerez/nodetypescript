@@ -1,1 +1,1 @@
-demo.diagonalteam.com
+diagonalteam.com
