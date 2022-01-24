@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import loginRoute from './routes/login.route'
+import moviesRoute from './routes/movies.route'
 import cors from 'cors'
 const port = 8080
 const app = express();
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 
 /** Routes go here */
 app.use('/api/login', loginRoute);
+app.use('/api/movies', moviesRoute);
 
 /** Error handling */
 app.use((req, res, next) => {

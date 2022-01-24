@@ -5,7 +5,7 @@ import {
   Route
 } from "react-router-dom";
 import Index from './views/Index'
-import Peliculas from './views/Peliculas'
+import Movies from './views/Movies'
 
 class App extends Component {
 
@@ -19,7 +19,7 @@ class App extends Component {
       <BrowserRouter>
         <Routes>
           <Route path={routes[0]} element={<Index />} />
-          <Route path={routes[1]} element={<Peliculas />} />
+          <Route path={routes[1]} element={<Movies />} />
         </Routes>
       </BrowserRouter>
     )
