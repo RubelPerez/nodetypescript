@@ -1,9 +1,12 @@
 import { Request } from 'express';
 import knex from '../config/config';
+import insertMovieCharacters from './movies_characters.dal';
+import insertMovieGenres from './movies_genres.dal';
 
 const getAllMovies = async (req: Request) => {
     const getMovies = await knex('movies')
-        .select('*', knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (genres.genre)),"]") as genre'))
+        .select('*', knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (genres.genre)),"]") as genre')
+        ,knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (characters.charac)),"]") as charac'))
         .join('movies_characters', 'movies_characters.movies_id', 'movies.id')
         .join('characters', 'movies_characters.characters_id ', 'characters.id')
         .join('movies_genres', 'movies_genres.movies_id', 'movies.id')
@@ -22,13 +25,18 @@ const getAllMovies = async (req: Request) => {
 const insertMovie = async (req: Request) => {
     const trx = await knex.transaction();
     const movies = req.body.movies;
+    const genres = req.body.genres;
+    const characters = req.body.characters;
+    const description = req.body.description;
+    const year = req.body.year
+    const image = req.body.image
     try {
         const insertMovie = await trx('movies')
             .insert({
-                image: movies.image,
-                movie: movies.movie,
-                year: movies.year,
-                description: movies.description
+                image: image,
+                movie: movies,
+                year: year,
+                description: description
             })
             .then((result: any) => {
                 return result;
@@ -37,9 +45,27 @@ const insertMovie = async (req: Request) => {
                 console.log(error);
                 throw new Error();
             });
-        const movieID = insertMovie[0];
+
+        characters.forEach((character: any) => {
+            if (!insertMovieCharacters(character, insertMovie[0])) {
+                throw new Error();
+            }
+
+        });
+        genres.forEach((genre: any) => {
+            if (!insertMovieGenres(genre, insertMovie[0])) {
+                throw new Error();
+            }
+        });
+
+        await trx.commit();
+        return true;
     } catch (ex: any) {
         await trx.rollback();
+        return false;
+
     }
+
+
 };
-export default getAllMovies;
+export { getAllMovies, insertMovie };
