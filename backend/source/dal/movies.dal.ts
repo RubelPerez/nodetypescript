@@ -2,7 +2,7 @@ import { Request } from 'express';
 import knex from '../config/config';
 import insertMovieCharacters from './movies_characters.dal';
 import insertMovieGenres from './movies_genres.dal';
-
+//hola
 const getAllMovies = async (req: Request) => {
     const getMovies = await knex('movies')
         .select('*', knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (genres.genre)),"]") as genre')
