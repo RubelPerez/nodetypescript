@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { getAllMovies, insertMovie } from '../dal/movies.dal';
+import { getAllMovies, insertMovie, getMovieByID, deleteMovie } from '../dal/movies.dal';
 
 
 const getMovies = async (req: Request, res: Response, next: NextFunction) => {
@@ -24,5 +24,27 @@ const insertMovies = async (req: Request, res: Response, next: NextFunction) => 
 
 };
 
+const getMovieByIDController = async (req: Request, res: Response, next: NextFunction) => {
 
-export { getMovies, insertMovies }
+    const getMoviesByID = await getMovieByID(req)
+    if (getMoviesByID) {
+        res.send({ msg: 'ok' })
+    }
+    else {
+        res.send({ msg: 'error' })
+    }
+}
+
+const deleteMovies = async (req: Request, res: Response, next: NextFunction) => {
+    const deleteMovieDB = await deleteMovie(req)
+    if (deleteMovieDB) {
+
+        res.send({ msg: 'ok' })
+    }
+    else {
+
+        res.send({ msg: 'error' })
+    }
+
+}
+export { getMovies, insertMovies, getMovieByIDController, deleteMovies }

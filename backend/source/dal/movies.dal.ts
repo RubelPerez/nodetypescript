@@ -1,12 +1,12 @@
 import { Request } from 'express';
 import knex from '../config/config';
-import insertMovieCharacters from './movies_characters.dal';
-import insertMovieGenres from './movies_genres.dal';
-//hola
+import { insertMovieCharacters, getMovieCharacters, deleteMovieCharacters } from './movies_characters.dal';
+import { insertMovieGenres, getMovieGenres, deleteMovieGenres } from './movies_genres.dal';
+
 const getAllMovies = async (req: Request) => {
     const getMovies = await knex('movies')
         .select('*', knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (genres.genre)),"]") as genre')
-        ,knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (characters.charac)),"]") as charac'))
+            , knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (characters.charac)),"]") as charac'))
         .join('movies_characters', 'movies_characters.movies_id', 'movies.id')
         .join('characters', 'movies_characters.characters_id ', 'characters.id')
         .join('movies_genres', 'movies_genres.movies_id', 'movies.id')
@@ -18,9 +18,26 @@ const getAllMovies = async (req: Request) => {
         .catch((error: any) => {
             console.log(error);
         });
-    console.log(getMovies);
     return getMovies;
 };
+
+const getMovieByID = async (req: Request) => {
+    const getMovies = await knex("movies")
+        .where({
+            id: req.params.id
+        })
+        .then((result: any) => {
+            return result;
+        })
+        .catch((error: unknown) => {
+            console.log(error);
+        });
+    const getCharacter = await getMovieCharacters(req.params.id)
+    const getGenre = await getMovieGenres(req.params.id)
+    return { getMovies, getCharacter, getGenre }
+
+
+}
 
 const insertMovie = async (req: Request) => {
     const trx = await knex.transaction();
@@ -68,4 +85,46 @@ const insertMovie = async (req: Request) => {
 
 
 };
-export { getAllMovies, insertMovie };
+
+const updateMovie = async (req: any) => {
+
+}
+const deleteMovie = async (req: any) => {
+    const genresID = req.body.genre_id;
+    const charactersID = req.body.character_id
+    const movieID = req.body.movie_id
+
+    const trx = await knex.transaction();
+    try {
+        const delMovie = await knex("movies")
+            .where({ id: movieID })
+            .del()
+            .then((result: any) => {
+                return result;
+            })
+            .catch((error: any) => {
+                console.log(error);
+                throw new Error();
+            });
+        genresID.forEach(async (genre_id: any) => {
+            const deleteMovieGenre = await deleteMovieGenres(movieID, genre_id);
+            if (!deleteMovieGenre) {
+                throw new Error();
+            }
+        });
+        charactersID.forEach(async (character_id: any) => {
+            const deleteMovieCharacter = await deleteMovieCharacters(movieID, character_id);
+            if (!deleteMovieCharacter) {
+                throw new Error();
+            }
+        });
+
+        await trx.commit();
+        return true;
+    }
+    catch (ex: unknown) {
+        await trx.rollback();
+        return false;
+    }
+}
+export { getAllMovies, insertMovie, updateMovie, deleteMovie, getMovieByID };
