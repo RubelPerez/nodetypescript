@@ -33,14 +33,10 @@ const Peliculas = () => {
     getMovies();
   }, []);
 
-  const getMovies = () => {
-    api.get("/movies/getMovies").then((result) => {
-      console.log(result.data.movies)
-      setData(result.data.movies)
-    });
-  };
   const [open, setOpen] = useState(false);
-  const [data,setData] = useState([]);
+  const [openEdit, setOpen] = useState(false);
+  const [data, setData] = useState([]);
+  const [movieData, setMovieData] = useState({});
   const columns = [
     {
       title: "ID",
@@ -51,17 +47,36 @@ const Peliculas = () => {
       field: "movie",
     },
     {
-        title: "Año",
-        field: "year",
-      },
+      title: "Año",
+      field: "year",
+    },
   ];
-
+  const getMoviesById = (id) => {
+    api.get("/movies/getmovieByID/" + id).then((result) => {
+      setMovieData(result.data.getMoviesByID.getMovies[0])
+    });
+  }
+  const getMovies = () => {
+    api.get("/movies/getMovies").then((result) => {
+      console.log(result.data.movies)
+      setData(result.data.movies)
+    });
+  };
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+  const handleClickOpenEdit = (e, id) => {
+    getMoviesById(id)
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+
   };
   const options = [
     { value: "chocolate", label: "Chocolate" },
@@ -74,7 +89,7 @@ const Peliculas = () => {
         Agregar una Pelicula
       </Button>
       <MaterialTable
-       icons={tableIcons}
+        icons={tableIcons}
         columns={columns}
         data={data}
         options={{
@@ -92,13 +107,14 @@ const Peliculas = () => {
               icon: () => <VisibilityIcon />,
               tooltip: "Detalles",
               onClick: (event, rowData) => {
-                alert(rowData.id);
+                handleClickOpenEdit(event, rowData.id)
+                // getMoviesById(rowData.id);
               },
             };
           },
         ]}
       />
-
+      {/* add new */}
       <Dialog fullScreen open={open} onClose={handleClose}>
         <AppBar sx={{ position: "relative" }}>
           <Toolbar>
@@ -127,7 +143,37 @@ const Peliculas = () => {
           <Select closeMenuOnSelect={false} isMulti options={options} />
         </List>
       </Dialog>
+      {/* edit one */}
+      <Dialog fullScreen open={openEdit} onClose={handleCloseEdit}>
+        <AppBar sx={{ position: "relative" }}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={handleCloseEdit}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              {movieData.movie}
+            </Typography>
+            <Button autoFocus color="inherit" onClick={handleCloseEdit}>
+              Guardar
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <List>
+          <ListItem button>
+            <ListItemText primary="Phone ringtone" secondary="Titania" />
+          </ListItem>
+          <Divider />
+
+          <Select closeMenuOnSelect={false} isMulti options={options} />
+        </List>
+      </Dialog>
     </div>
+
   );
 };
 
