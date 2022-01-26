@@ -5,19 +5,26 @@ import { insertMovieGenres, getMovieGenres, deleteMovieGenres } from './movies_g
 
 const getAllMovies = async (req: Request) => {
     const getMovies = await knex('movies')
-        .select('*', knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (genres.genre)),"]") as genre')
-            , knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (characters.charac)),"]") as charac'))
-        .join('movies_characters', 'movies_characters.movies_id', 'movies.id')
-        .join('characters', 'movies_characters.characters_id ', 'characters.id')
-        .join('movies_genres', 'movies_genres.movies_id', 'movies.id')
-        .join('genres', 'movies_genres.genres_id', 'genres.id')
-        .groupBy('movies_genres.movies_id')
         .then((result: any) => {
             return result;
         })
         .catch((error: any) => {
             console.log(error);
         });
+    // const getMovies = await knex('movies')
+    //     .select('*', knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (genres.genre)),"]") as genre')
+    //         , knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (characters.charac)),"]") as charac'))
+    //     .join('movies_characters', 'movies_characters.movies_id', 'movies.id')
+    //     .join('characters', 'movies_characters.characters_id ', 'characters.id')
+    //     .join('movies_genres', 'movies_genres.movies_id', 'movies.id')
+    //     .join('genres', 'movies_genres.genres_id', 'genres.id')
+    //     .groupBy('movies_genres.movies_id')
+    //     .then((result: any) => {
+    //         return result;
+    //     })
+    //     .catch((error: any) => {
+    //         console.log(error);
+    //     });
     return getMovies;
 };
 
@@ -63,13 +70,13 @@ const insertMovie = async (req: Request) => {
                 throw new Error();
             });
 
-        characters.forEach((character: any) => {
+        characters?.forEach((character: any) => {
             if (!insertMovieCharacters(character, insertMovie[0])) {
                 throw new Error();
             }
 
         });
-        genres.forEach((genre: any) => {
+        genres?.forEach((genre: any) => {
             if (!insertMovieGenres(genre, insertMovie[0])) {
                 throw new Error();
             }
@@ -85,9 +92,52 @@ const insertMovie = async (req: Request) => {
 
 
 };
-
+const verifyIfExistsMovies = async (req: Request) => {
+    const verifyGenres = await knex('movies')
+        .where
+        ({
+            movie: req.body.movies
+        })
+        .modify(function (queryBuilder: any) {
+            if (req.body.id > 0) {
+                queryBuilder.andWhereNot("id", "=", req.body.id);
+            }
+        })
+        .then((result: any) => {
+            return result;
+        })
+        .catch((err: any) => {
+            console.log(err)
+            return false;
+        })
+    if (verifyGenres.length > 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 const updateMovie = async (req: any) => {
-
+    const updateMovies = await knex('movies')
+        .update
+        ({
+            movie: req.body.movies,
+            year: req.body.year,
+            description: req.body.description,
+            genre: req.body.genre
+        })
+        .where
+        ({
+            "id": req.body.id
+        })
+        .then((result: any) => {
+            return result;
+        })
+        .catch((err: any) => {
+            console.log(err)
+            return false;
+        })
+    return updateMovies;
 }
 const deleteMovie = async (req: any) => {
     const genresID = req.body.genre_id;
@@ -127,4 +177,4 @@ const deleteMovie = async (req: any) => {
         return false;
     }
 }
-export { getAllMovies, insertMovie, updateMovie, deleteMovie, getMovieByID };
+export { getAllMovies, insertMovie, updateMovie, deleteMovie, getMovieByID, verifyIfExistsMovies };

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import knex from '../config/config'
+import knex from '../../config/config'
 
 
 const secret = 'eThicLine';

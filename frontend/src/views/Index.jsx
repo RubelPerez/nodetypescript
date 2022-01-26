@@ -6,7 +6,7 @@ import api from '../api/axiosBase';
 import { useNavigate } from 'react-router-dom';
 
 
-import "../css/index.css"
+import "../css/bootstrap.css"
 const Index = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -26,7 +26,7 @@ const Index = () => {
 
     }
     return (
-        <div className="root">
+        <div className="container">
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <TextField
@@ -47,6 +47,7 @@ const Index = () => {
 
                     <Button
                         variant="contained"
+                        className={"btn btn-primary"}
                         onClick={(e) => login(e)}
                     >iniciar sesion</Button>
 
