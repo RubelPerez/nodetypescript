@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
 import { getAllMovies, insertMovie, getMovieByID, deleteMovie } from '../dal/movies.dal';
 
-
-const getMovies = async (req: Request, res: Response, next: NextFunction) => {
+const getMoviesController = async (req: Request, res: Response, next: NextFunction) => {
     const movies = await getAllMovies(req).then((result: any) => { return result })
     res.send({ movies })
 };
 
-const insertMovies = async (req: Request, res: Response, next: NextFunction) => {
+const insertMoviesController = async (req: Request, res: Response, next: NextFunction) => {
+   
     const insert = await insertMovie(req)
         .then((result: any) => {
             return result
         })
         .catch((ex: any) => {
+            console.log(ex)
             return ex
         })
     if (insert) {
@@ -35,7 +36,7 @@ const getMovieByIDController = async (req: Request, res: Response, next: NextFun
     }
 }
 
-const deleteMovies = async (req: Request, res: Response, next: NextFunction) => {
+const deleteMoviesController = async (req: Request, res: Response, next: NextFunction) => {
     const deleteMovieDB = await deleteMovie(req)
     if (deleteMovieDB) {
 
@@ -47,4 +48,4 @@ const deleteMovies = async (req: Request, res: Response, next: NextFunction) => 
     }
 
 }
-export { getMovies, insertMovies, getMovieByIDController, deleteMovies }
+export { getMoviesController, insertMoviesController, getMovieByIDController, deleteMoviesController }

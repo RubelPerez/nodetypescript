@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MaterialTable from "material-table";
 import tableIcons from "../components/AllIcons";
-import "./../css/Peliculas.css";
+import "./../css/bootstrap.css";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import {
   Button,
@@ -35,6 +35,7 @@ const Peliculas = () => {
 
   const getMovies = () => {
     api.get("/movies/getMovies").then((result) => {
+      console.log(result.data.movies)
       setData(result.data.movies)
     });
   };
@@ -73,7 +74,7 @@ const Peliculas = () => {
         Agregar una Pelicula
       </Button>
       <MaterialTable
-       // icons={tableIcons}
+       icons={tableIcons}
         columns={columns}
         data={data}
         options={{

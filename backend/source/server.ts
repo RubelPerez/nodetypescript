@@ -4,7 +4,8 @@ import loginRoute from './routes/login.route'
 import moviesRoute from './routes/movies.route'
 import modifyCharacters from './routes/movies_characters.route'
 import modifyGenres from './routes/movies_genres.route'
-import cors from 'cors'
+import genresRoute from './routes/genres.route'
+import charactersRoute from './routes/characters.route'
 const port = 8080
 const app = express();
 
@@ -31,6 +32,8 @@ app.use('/api/login', loginRoute);
 app.use('/api/movies', moviesRoute);
 app.use('/api/modifyMoviesCharacters', modifyCharacters);
 app.use('/api/modifyMoviesGenres', modifyGenres);
+app.use('/api/genres', genresRoute);
+app.use('/api/characters', charactersRoute);
 /** ERROR CASE*/
 app.use((req: Request, res: Response, next: NextFunction) => {
     const error = new Error('Not found');

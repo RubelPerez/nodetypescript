@@ -7,10 +7,10 @@ const getAllMovies = async (req: Request) => {
     const getMovies = await knex('movies')
         .select('*', knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (genres.genre)),"]") as genre')
             , knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (characters.charac)),"]") as charac'))
-        .join('movies_characters', 'movies_characters.movies_id', 'movies.id')
-        .join('characters', 'movies_characters.characters_id ', 'characters.id')
-        .join('movies_genres', 'movies_genres.movies_id', 'movies.id')
-        .join('genres', 'movies_genres.genres_id', 'genres.id')
+        .leftJoin('movies_characters', 'movies_characters.movies_id', 'movies.id')
+        .leftJoin('characters', 'movies_characters.characters_id ', 'characters.id')
+        .leftJoin('movies_genres', 'movies_genres.movies_id', 'movies.id')
+        .leftJoin('genres', 'movies_genres.genres_id', 'genres.id')
         .groupBy('movies_genres.movies_id')
         .then((result: any) => {
             return result;

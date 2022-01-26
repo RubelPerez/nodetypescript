@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import knex from '../config/config';
 
 const insertMovieCharacters = async (character_id: number, movie_id: number) => {
