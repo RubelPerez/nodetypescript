@@ -47,75 +47,78 @@ const getMovieByID = async (req: Request) => {
 }
 
 const insertMovie = async (req: Request) => {
-    const trx = await knex.transaction();
-    const movies = req.body.movies;
-    const genres = req.body.genres;
-    const characters = req.body.characters;
-    const description = req.body.description;
-    const year = req.body.year
-    const image = req.body.image
-    try {
-        const insertMovie = await trx('movies')
-            .insert({
-                image: image,
-                movie: movies,
-                year: year,
-                description: description
-            })
-            .then((result: any) => {
-                return result;
-            })
-            .catch((error: any) => {
-                console.log(error);
-                throw new Error();
-            });
+    console.log(req.body.movie.movies)
+    return true;
+    // const trx = await knex.transaction();
+    // const movies = req.body.movies;
+    // const genres = req.body.genres;
+    // const characters = req.body.characters;
+    // const description = req.body.description;
+    // const year = req.body.year
+    // const image = req.body.image
+    // try {
+    //     const insertMovie = await trx('movies')
+    //         .insert({
+    //             image: image,
+    //             movie: movies,
+    //             year: year,
+    //             description: description
+    //         })
+    //         .then((result: any) => {
+    //             return result;
+    //         })
+    //         .catch((error: any) => {
+    //             console.log(error);
+    //             throw new Error();
+    //         });
 
-        characters?.forEach((character: any) => {
-            if (!insertMovieCharacters(character, insertMovie[0])) {
-                throw new Error();
-            }
+    //     characters?.forEach((character: any) => {
+    //         if (!insertMovieCharacters(character, insertMovie[0])) {
+    //             throw new Error();
+    //         }
 
-        });
-        genres?.forEach((genre: any) => {
-            if (!insertMovieGenres(genre, insertMovie[0])) {
-                throw new Error();
-            }
-        });
+    //     });
+    //     genres?.forEach((genre: any) => {
+    //         if (!insertMovieGenres(genre, insertMovie[0])) {
+    //             throw new Error();
+    //         }
+    //     });
 
-        await trx.commit();
-        return true;
-    } catch (ex: any) {
-        await trx.rollback();
-        return false;
+    //     await trx.commit();
+    //     return true;
+    // } catch (ex: any) {
+    //     await trx.rollback();
+    //     return false;
 
-    }
+    // }
 
 
 };
 const verifyIfExistsMovies = async (req: Request) => {
-    const verifyGenres = await knex('movies')
-        .where
-        ({
-            movie: req.body.movies
-        })
-        .modify(function (queryBuilder: any) {
-            if (req.body.id > 0) {
-                queryBuilder.andWhereNot("id", "=", req.body.id);
-            }
-        })
-        .then((result: any) => {
-            return result;
-        })
-        .catch((err: any) => {
-            console.log(err)
-            return false;
-        })
-    if (verifyGenres.length > 0) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    // const verifyGenres = await knex('movies')
+    //     .where
+    //     ({
+    //         movie: req.body.movies
+    //     })
+    //     .modify(function (queryBuilder: any) {
+    //         if (req.body.id > 0) {
+    //             queryBuilder.andWhereNot("id", "=", req.body.id);
+    //         }
+    //     })
+    //     .then((result: any) => {
+    //         return result;
+    //     })
+    //     .catch((err: any) => {
+    //         console.log(err)
+    //         return false;
+    //     })
+    // if (verifyGenres.length > 0) {
+    //     return true;
+    // }
+    // else {
+    //     return false;
+    // }
+    return false;
 }
 const updateMovie = async (req: any) => {
     const updateMovies = await knex('movies')

@@ -11,7 +11,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Slide,
+  Slide, TextField,
 } from "@mui/material";
 import Select from "react-select";
 import ListItemText from "@mui/material/ListItemText";
@@ -24,8 +24,9 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import api from "../api/axiosBase";
+const qs = require('qs');
 
-const Peliculas = () => {
+const Movies = () => {
 
 
 
@@ -34,9 +35,21 @@ const Peliculas = () => {
   }, []);
 
   const [open, setOpen] = useState(false);
-  const [openEdit, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [data, setData] = useState([]);
-  const [movieData, setMovieData] = useState({});
+  const [movieData, setMovieData] = useState([]);
+  const [movieGenres, setMovieGenres] = useState([]);
+  const [movie, setMovie] = useState({
+    movies: ' ',
+    description: ' ',
+    year: 0,
+    image: ' '
+  })
+  const [saveMovieGenre, setSaveMovieGenre] = useState([])
+  const [genres, setGenres] = useState([]);
+  const [characters, setCharacters] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState({})
+  const [selectedCharacters, setSelectedCharacters] = useState({})
   const columns = [
     {
       title: "ID",
@@ -54,6 +67,7 @@ const Peliculas = () => {
   const getMoviesById = (id) => {
     api.get("/movies/getmovieByID/" + id).then((result) => {
       setMovieData(result.data.getMoviesByID.getMovies[0])
+      getMoviesGenres(id)
     });
   }
   const getMovies = () => {
@@ -62,7 +76,26 @@ const Peliculas = () => {
       setData(result.data.movies)
     });
   };
+
+  const getGenre = () => {
+    api.get("/genres/getGenres").then((result) => {
+      setGenres(result.data.getAllGenre)
+    })
+  }
+  const getCharacters = () => {
+    api.get("/characters/getCharacters").then((result) => {
+      setCharacters(result.data.getCharacters)
+    })
+  }
+  const getMoviesGenres = (id) => {
+    api.get("/modifyMoviesGenres/getMoviesGenresByID/" + id).then((result) => {
+      setMovieGenres(result.data.getMovieGenre)
+
+    })
+  }
   const handleClickOpen = () => {
+    getCharacters();
+    getGenre();
     setOpen(true);
   };
 
@@ -70,7 +103,8 @@ const Peliculas = () => {
     setOpen(false);
   };
   const handleClickOpenEdit = (e, id) => {
-    getMoviesById(id)
+    getMoviesById(id);
+    getGenre();
     setOpenEdit(true);
   };
 
@@ -78,11 +112,35 @@ const Peliculas = () => {
     setOpenEdit(false);
 
   };
-  const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
+
+  const changeHandlerMovie = (e) => {
+    setMovie({
+      ...movie,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSelectedGenres = (data) => {
+
+    setSelectedGenres(data)
+  }
+  const handleSelectedCharacters = (data) => {
+
+    setSelectedCharacters(data)
+  }
+
+  const saveMovie = (e) => {
+    // const genresValues = selectedGenres.values;
+    // const charactersValues = selectedCharacters.values;
+    console.log(selectedGenres)
+    console.log(selectedCharacters)
+
+    api.post("/movies/insertMovie", { movie, selectedCharacters, selectedGenres }).then((result) => {
+      alert(result.data.msg)
+    }).catch((err) => { alert(err) })
+
+  }
+  // const options = 1
   return (
     <div className="App">
       <Button variant="contained" onClick={(e) => handleClickOpen(e)}>
@@ -127,21 +185,56 @@ const Peliculas = () => {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Pelicula
+              Agregar una pelicula
             </Typography>
-            <Button autoFocus color="inherit" onClick={handleClose}>
+            <Button autoFocus color="inherit" onClick={(e) => { saveMovie(e) }}>
               Guardar
             </Button>
           </Toolbar>
         </AppBar>
-        <List>
-          <ListItem button>
-            <ListItemText primary="Phone ringtone" secondary="Titania" />
-          </ListItem>
-          <Divider />
+        <DialogContent>
+          <TextField
+            id="movies"
+            name="movies"
+            label="Nombre de la pelicula"
+            // value={movies}
+            onChange={changeHandlerMovie}
 
-          <Select closeMenuOnSelect={false} isMulti options={options} />
-        </List>
+          />
+          <TextField
+            id="description"
+            name="description"
+            label="Descripcion de la pelicula"
+            // value={description}
+            onChange={changeHandlerMovie}
+
+          />
+          <TextField
+            id="year"
+            name="year"
+            label="Año de la pelicula"
+            // value={year}
+            onChange={changeHandlerMovie}
+
+          />
+          <Select
+            closeMenuOnSelect={false}
+            isMulti
+            options={genres.map((genre) => {
+              return { value: genre.id, label: genre.genre }
+            })}
+            onChange={handleSelectedGenres}
+
+          />
+          <Select
+            closeMenuOnSelect={false}
+            isMulti
+            options={characters.map((character) => {
+              return { value: character.id, label: character.charac }
+            })}
+            onChange={handleSelectedCharacters}
+          />
+        </DialogContent>
       </Dialog>
       {/* edit one */}
       <Dialog fullScreen open={openEdit} onClose={handleCloseEdit}>
@@ -158,6 +251,7 @@ const Peliculas = () => {
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               {movieData.movie}
             </Typography>
+
             <Button autoFocus color="inherit" onClick={handleCloseEdit}>
               Guardar
             </Button>
@@ -168,8 +262,16 @@ const Peliculas = () => {
             <ListItemText primary="Phone ringtone" secondary="Titania" />
           </ListItem>
           <Divider />
-
-          <Select closeMenuOnSelect={false} isMulti options={options} />
+          <h1>aqui joputa</h1>
+          <Select
+            closeMenuOnSelect={false}
+            isMulti
+            value={movieGenres.map((genres) => {
+              return { value: genres?.genres_id, label: genres?.genre }
+            })}
+            options={genres.map((genre) => {
+              return { value: genre.id, label: genre.genre }
+            })} />
         </List>
       </Dialog>
     </div>
@@ -177,4 +279,4 @@ const Peliculas = () => {
   );
 };
 
-export default Peliculas;
+export default Movies;

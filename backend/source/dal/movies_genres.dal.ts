@@ -22,10 +22,10 @@ const insertMovieGenres = async (genre_id: any, movie_id: any) => {
     }
 }
 
-const getMovieGenres = async (genre_id: any) => {
+const getMovieGenres = async (movie_id: any) => {
     const getMovieGenre = await knex("movies_genres")
         .join("genres", "genres.id", "movies_genres.genres_id")
-        .where({ "movies_genres.movies_id": genre_id })
+        .where({ "movies_genres.movies_id": movie_id })
         .then((result: any) => {
             return result;
         })

@@ -2,11 +2,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 
-const insertCharacters = [
+const cleanCharacters = [
 
-    body('movies')
+    body('character')
         .notEmpty()
-        .escape()
+        // .escape()
         .isLength({ min: 3, max: 200 })
         .trim()
     ,
@@ -22,4 +22,4 @@ const insertCharacters = [
     }
 ];
 
-export = { insertCharacters }
+export = { cleanCharacters }

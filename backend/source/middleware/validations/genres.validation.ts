@@ -2,11 +2,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 
-const insertGenres = [
+const cleanGenres = [
 
-    body('movies')
+    body('genre')
         .notEmpty()
-        .escape()
+        // .escape()
         .isLength({ min: 3, max: 200 })
         .trim()
     ,
@@ -22,4 +22,4 @@ const insertGenres = [
     }
 ];
 
-export = { insertGenres }
+export = { cleanGenres }

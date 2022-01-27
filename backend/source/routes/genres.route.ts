@@ -1,5 +1,6 @@
 import express from 'express';
 import * as genresController from '../controllers/genres.controller'
+import genres from '../middleware/validations/genres.validation'
 
 const router = express.Router();
 
