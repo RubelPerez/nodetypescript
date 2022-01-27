@@ -1,5 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import { insertMovieCharacters, deleteMovieCharacters } from '../dal/movies_characters.dal';
+import { insertMovieCharacters, deleteMovieCharacters, getMovieCharacters } from '../dal/movies_characters.dal';
+
+
+const getMoviesGenresByIDController = async (req: Request, res: Response) => {
+    const getMovieCharacter = await getMovieCharacters(parseInt(req.params.id))
+    if (getMovieCharacter) {
+        res.send({ getMovieCharacter })
+    } else { res.send({ msg: 'error' }) }
+}
+
 
 const insertMovieCharactersController = async (req: Request, res: Response, next: NextFunction) => {
     const character_id: number = req.body.character_id;
@@ -27,4 +36,4 @@ const deleteMovieCharactersController = async (req: Request, res: Response, next
 }
 
 
-export { insertMovieCharactersController, deleteMovieCharactersController } 
+export { insertMovieCharactersController, deleteMovieCharactersController, getMoviesGenresByIDController } 

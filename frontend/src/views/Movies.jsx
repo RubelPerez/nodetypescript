@@ -38,7 +38,6 @@ const Movies = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const [data, setData] = useState([]);
   const [movieData, setMovieData] = useState([]);
-  const [movieGenres, setMovieGenres] = useState([]);
   const [movie, setMovie] = useState({
     movies: ' ',
     description: ' ',
@@ -50,6 +49,8 @@ const Movies = () => {
   const [characters, setCharacters] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState({})
   const [selectedCharacters, setSelectedCharacters] = useState({})
+  const [movieGenres, setMovieGenres] = useState([]);
+  const [movieCharacters, setMovieCharacters] = useState([]);
   const columns = [
     {
       title: "ID",
@@ -67,6 +68,7 @@ const Movies = () => {
   const getMoviesById = (id) => {
     api.get("/movies/getmovieByID/" + id).then((result) => {
       setMovieData(result.data.getMoviesByID.getMovies[0])
+      getMoviesCharacters(id)
       getMoviesGenres(id)
     });
   }
@@ -90,6 +92,12 @@ const Movies = () => {
   const getMoviesGenres = (id) => {
     api.get("/modifyMoviesGenres/getMoviesGenresByID/" + id).then((result) => {
       setMovieGenres(result.data.getMovieGenre)
+
+    })
+  }
+  const getMoviesCharacters = (id) => {
+    api.get("/modifyMoviesCharacters/getMoviesCharacterByID/" + id).then((result) => {
+      setMovieCharacters(result.data.getMovieCharacter)
 
     })
   }
@@ -130,17 +138,13 @@ const Movies = () => {
   }
 
   const saveMovie = (e) => {
-    // const genresValues = selectedGenres.values;
-    // const charactersValues = selectedCharacters.values;
-    console.log(selectedGenres)
-    console.log(selectedCharacters)
 
     api.post("/movies/insertMovie", { movie, selectedCharacters, selectedGenres }).then((result) => {
       alert(result.data.msg)
     }).catch((err) => { alert(err) })
 
   }
-  // const options = 1
+
   return (
     <div className="App">
       <Button variant="contained" onClick={(e) => handleClickOpen(e)}>
@@ -151,9 +155,6 @@ const Movies = () => {
         columns={columns}
         data={data}
         options={{
-          // rowStyle: (rowData) => ({
-          //   backgroundColor: rowData.status ==='Pendiente'? "rgba(173, 20, 20, 0.6)" : "blue"
-          // }),
           pageSizeOptions: [5, 10, 15, 20, data.length],
           actionsColumnIndex: -1,
           emptyRowsWhenPaging: true,
@@ -166,7 +167,7 @@ const Movies = () => {
               tooltip: "Detalles",
               onClick: (event, rowData) => {
                 handleClickOpenEdit(event, rowData.id)
-                // getMoviesById(rowData.id);
+
               },
             };
           },
@@ -262,7 +263,7 @@ const Movies = () => {
             <ListItemText primary="Phone ringtone" secondary="Titania" />
           </ListItem>
           <Divider />
-          <h1>aqui joputa</h1>
+          <h1>aqui Genres</h1>
           <Select
             closeMenuOnSelect={false}
             isMulti
@@ -272,6 +273,17 @@ const Movies = () => {
             options={genres.map((genre) => {
               return { value: genre.id, label: genre.genre }
             })} />
+          <h1>aqui Characters</h1>
+          <Select
+            closeMenuOnSelect={false}
+            isMulti
+            value={movieCharacters.map((characters) => {
+              return { value: characters?.characters_id, label: characters?.charac }
+            })}
+          // options={characters.map((character) => {
+          //   return { value: character.id, label: character.charac }
+          // })}
+          />
         </List>
       </Dialog>
     </div>
