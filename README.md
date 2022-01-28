@@ -4,13 +4,13 @@
 
 just a movie CRUD (**C**reate, **R**ead, **u**pdate, **D**elete) manager with a Static login (by now), multiple joins (Relations one-to-many)
 
-Movie and characters have image fields, is automated. You can not insert a own image, it's taken from an wikipedia API
+Movie and characters have image fields, is automated. You can not insert your own image, it's taken from a wikipedia API
 
-### Whan can I Do?
+### What can I Do?
 
-* Interact with the database with real time update (working on it)
-* Create a PDF Reports (working on it)
-* Send to your email that PDF reports (working on it)
+* Interact with the database on real time (working on it)
+* Create a PDF Report (working on it)
+* Send to your email that PDF report (working on it)
 
 #### Development STACKS
 
@@ -37,10 +37,9 @@ Movie and characters have image fields, is automated. You can not insert a own i
 * req.body/params validations (express-validator)
 * Create a cronjob to delete database data each 12hrs
 * implement pdf (@types/html-pdf)
-* implements bcrypt
+* implement bcrypt
 * use a real Authentication (jwt,passport)
 * implement nodemailer
-* Should have a Cronjob that execute a drop database sentence each 12 hrs
 
 ### Database (MYSQL)
 
