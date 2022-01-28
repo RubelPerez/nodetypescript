@@ -1,4 +1,4 @@
-# Diagonalteam.online
+# nodeTypeScript
 
 ## Project descriptions (working on it)
 
