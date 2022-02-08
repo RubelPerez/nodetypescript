@@ -3,8 +3,8 @@ const knex = require('knex')({
     connection: {
         host: 'localhost',
         port: 3306,
-        user: 'phpmyadmin',
-        password: 'root',
+        user: 'root',
+        password: '',
         database: 'db_movies'
     }
 });

@@ -40,7 +40,12 @@
 *::after {
   box-sizing: border-box;
 }
+.navlinks_ListDashboard
+{
+ margin-left: 2rem;
+ font-size: 1.6rem;
 
+}
 html {
   font-family: sans-serif;
   line-height: 1.15;

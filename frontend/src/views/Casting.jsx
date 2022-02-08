@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -16,15 +15,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import allIcons from "./../components/AllIcons";
 import ListDashboard from "./../components/ListDashboard";
 import MaterialTable from "material-table";
-import { Button, Dialog, TextareaAutosize, TextField } from "@mui/material";
-import ListItemText from "@mui/material/ListItemText";
-import ListItem from "@mui/material/ListItem";
-import CloseIcon from "@mui/icons-material/Close";
-import Slide from "@mui/material/Slide";
-import Select from "react-select";
-import api from "../api/axiosBase";
-import "./../css/bootstrap.css";
-
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
@@ -72,64 +62,16 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function Movies() {
-  //data var
-  const [movie, setMovie] = useState({
-    movies: " ",
-    description: " ",
-    year: 0,
-    image: " ",
-  });
-  const [genres, setGenres] = useState([]);
-  const [characters, setCharacters] = useState([]);
+export default function Casting() {
   const theme = useTheme();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = React.useState(true);
 
-  const changeHandlerMovie = (e) => {
-    setMovie({
-      ...movie,
-      [e.target.name]: e.target.value,
-    });
-  };
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
-  };
-
-  const [openDialog, setOpenDialog] = React.useState(false);
-
-  const handleClickOpen = () => {
-    getGenre();
-    // getCharacters();
-    setOpenDialog(true);
-  };
-
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
-
-  //api's calls
-  // React.useEffect(() => {});
-  const saveMovie = (e) => {
-    api
-      .post("/movies/insertMovie", movie)
-      .then((result) => {
-        alert(result.data.msg);
-      })
-      .catch((err) => {
-        alert(err);
-      });
-  };
-  const getGenre = () => {
-    api
-      .get("/genres/getGenres")
-      .then((result) => {
-        setGenres(result.data.getAllGenre);
-      })
-      .catch((err) => {});
   };
 
   return (
@@ -147,7 +89,7 @@ export default function Movies() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Movies
+            Casting
           </Typography>
         </Toolbar>
       </AppBar>
@@ -181,9 +123,6 @@ export default function Movies() {
       <Main open={open}>
         <DrawerHeader />
 
-        <Button variant="outlined" onClick={handleClickOpen}>
-          Add movie
-        </Button>
         <MaterialTable
           icons={allIcons}
           options={{
@@ -193,76 +132,6 @@ export default function Movies() {
             // selection:true
           }}
         />
-
-        {/*diaglo*/}
-        <Dialog
-          fullScreen
-          open={openDialog}
-          onClose={handleClose}
-          //TransitionComponent={Transition}
-        >
-          <AppBar sx={{ position: "relative" }}>
-            <Toolbar>
-              <IconButton
-                edge="start"
-                color="inherit"
-                onClick={handleClose}
-                aria-label="close"
-              >
-                <CloseIcon />
-              </IconButton>
-              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                Add Movie
-              </Typography>
-              <Button autoFocus color="inherit" onClick={(e) => saveMovie(e)}>
-                save
-              </Button>
-            </Toolbar>
-          </AppBar>
-          /* aqui el contenido */
-          <TextField
-            id="movies"
-            label="Movie"
-            name="movies"
-            variant="outlined"
-            size="medium"
-            className="m-3 p-2"
-            onChange={changeHandlerMovie}
-          />
-          <TextField
-            id="year"
-            label="Year"
-            name="year"
-            variant="outlined"
-            className="m-3 p-2"
-            onChange={changeHandlerMovie}
-          />
-          <TextField
-            id="description"
-            label="Description"
-            name="description"
-            multiline
-            rows={4}
-            className="m-3 p-2"
-            onChange={changeHandlerMovie}
-          />
-          <Select
-            closeMenuOnSelect={false}
-            isMulti
-            options={genres?.map((genre) => {
-              return { value: genre.id, label: genre.genre };
-            })}
-            // onChange={handleSelectedGenres}
-          />
-          {/* <Select
-            closeMenuOnSelect={false}
-            isMulti
-            options={characters?.map((character) => {
-              return { value: character.id, label: character.charac };
-            })}
-            // onChange={handleSelectedCharacters}
-          /> */}
-        </Dialog>
       </Main>
     </Box>
   );
