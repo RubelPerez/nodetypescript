@@ -103,6 +103,7 @@ export default function Movies() {
 
   const handleClickOpen = () => {
     getGenre();
+    //comented frond
     // getCharacters();
     setOpenDialog(true);
   };
