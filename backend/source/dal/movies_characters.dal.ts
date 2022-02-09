@@ -1,9 +1,8 @@
 import knex from '../config/config';
 
 const insertMovieCharacters = async (character_id: number, movie_id: number) => {
-    const insertMoviesCharacter = await knex("movies_characters")
-        .insert
-        ({
+    const insertMoviesCharacter = await knex('movies_characters')
+        .insert({
             movies_id: movie_id,
             characters_id: character_id
         })
@@ -16,17 +15,16 @@ const insertMovieCharacters = async (character_id: number, movie_id: number) => 
         });
 
     if (insertMoviesCharacter) {
-        return true
-    }
-    else {
+        return true;
+    } else {
         return false;
     }
-}
+};
 
 const getMovieCharacters = async (movie_id: any) => {
-    const getMovieCharacter = await knex("movies_characters")
-        .join("characters", "characters.id", "movies_characters.characters_id")
-        .where({ "movies_characters.movies_id": movie_id })
+    const getMovieCharacter = await knex('movies_characters')
+        .join('characters', 'characters.id', 'movies_characters.characters_id')
+        .where({ 'movies_characters.movies_id': movie_id })
         .then((result: any) => {
             return result;
         })
@@ -35,13 +33,11 @@ const getMovieCharacters = async (movie_id: any) => {
             throw new Error();
         });
     return getMovieCharacter;
-}
-const deleteMovieCharacters = async (character_id: number, movie_id: number) => {
-   
-    const deleteMovieCharacter = await knex("movies_characters")
+};
+const deleteMovieCharacters = async (movie_id: any) => {
+    const deleteMovieCharacter = await knex('movies_characters')
         .where({
-            movies_id: movie_id,
-            characters_id: character_id
+            movies_id: movie_id
         })
         .del()
         .then((result: any) => {
@@ -51,11 +47,6 @@ const deleteMovieCharacters = async (character_id: number, movie_id: number) => 
             console.log(error);
             throw new Error();
         });
-
-    if (deleteMovieCharacter) {
-        return true
-    } else {
-        return false;
-    }
-}
+    return true;
+};
 export { insertMovieCharacters, getMovieCharacters, deleteMovieCharacters };

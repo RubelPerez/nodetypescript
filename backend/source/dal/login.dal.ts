@@ -1,14 +1,14 @@
-
 import { Request } from 'express';
 
-
 const verifiedLogin = async (req: Request) => {
-    if (req.body.username == "usuario" && req.body.password == "usuario") {
+    const { username, password } = req.body;
+    console.log(username)
+    console.log(password)
+    if (username == 'usuario' && password == 'usuario') {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
-}
+};
 
-export default verifiedLogin
+export default verifiedLogin;

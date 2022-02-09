@@ -11,7 +11,7 @@ const getAllMovies = async (req: Request) => {
         .catch((error: any) => {
             console.log(error);
         });
-        
+
     // const getMovies = await knex('movies')
     //     .select('*', knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (genres.genre)),"]") as genre')
     //         , knex.raw('CONCAT("[",GROUP_CONCAT(DISTINCT (characters.charac)),"]") as charac'))
@@ -30,7 +30,7 @@ const getAllMovies = async (req: Request) => {
 };
 
 const getMovieByID = async (req: Request) => {
-    const getMovies = await knex("movies")
+    const getMovies = await knex('movies')
         .where({
             id: req.params.id
         })
@@ -40,27 +40,18 @@ const getMovieByID = async (req: Request) => {
         .catch((error: unknown) => {
             console.log(error);
         });
-    const getCharacter = await getMovieCharacters(req.params.id)
-    const getGenre = await getMovieGenres(req.params.id)
-    return { getMovies, getCharacter, getGenre }
+    const getCharacter = await getMovieCharacters(req.params.id);
+    const getGenre = await getMovieGenres(req.params.id);
+    return { getMovies, getCharacter, getGenre };
+};
 
-
-}
-
-const insertMovie = async (req: Request) => {
-    console.log("insert movie")
+const insertMovie = async (movie: any, genres: any[], characters: any[]) => {
     const trx = await knex.transaction();
-    const movie = req.body.movie;
-    const genres = req.body.selectedGenres;
-    const characters = req.body.selectedCharacters;
-    console.log({ movie })
-    console.log({ characters })
-    console.log({ genres })
     try {
         const insertMovie = await trx('movies')
             .insert({
                 image: movie.image,
-                movie: movie.movies,
+                movie: movie.movie,
                 year: movie.year,
                 description: movie.description
             })
@@ -71,87 +62,78 @@ const insertMovie = async (req: Request) => {
                 console.log(error);
                 throw new Error();
             });
-
-        characters?.forEach((character: any) => {
-            // console.log("chara", character)
-            if (!insertMovieCharacters(character.value, insertMovie[0])) {
-                throw new Error();
-            }
-
-        });
-        genres?.forEach((genre: any) => {
-            // console.log("genre", genre)
-            if (!insertMovieGenres(genre.value, insertMovie[0])) {
-                throw new Error();
-            }
-        });
+        if (characters.length > 0) {
+            characters.forEach((character: any) => {
+                if (!insertMovieCharacters(character.value, insertMovie[0])) {
+                    throw new Error();
+                }
+            });
+        }
+        if (genres.length > 0) {
+            genres.forEach((genre: any) => {
+                if (!insertMovieGenres(genre.value, insertMovie[0])) {
+                    throw new Error();
+                }
+            });
+        }
 
         await trx.commit();
         return true;
     } catch (ex: any) {
+        console.log(ex);
         await trx.rollback();
         return false;
-
     }
-
-
 };
-const verifyIfExistsMovies = async (req: Request) => {
-    console.log("verify movie")
-    const verifyGenres = await knex('movies')
-        .where
-        ({
-            movie: req.body.movie.movies
+const verifyIfExistsMovies = async (movie: any) => {
+    const verifyMovie = await knex('movies')
+        .where({
+            movie: movie.movie
         })
         .modify(function (queryBuilder: any) {
-            if (req.body.movie.id > 0) {
-                queryBuilder.andWhereNot("id", "=", req.body.movie.id);
+            if (movie.id > 0) {
+                queryBuilder.andWhereNot('id', '=', movie.id);
             }
         })
+        .count('* as Duplicated')
         .then((result: any) => {
             return result;
         })
         .catch((err: any) => {
-            console.log(err)
+            console.log(err);
             return false;
-        })
-    if (verifyGenres.length > 0) {
+        });
+    if (verifyMovie[0].Duplicated == 0) {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
-}
-const updateMovie = async (req: any) => {
+};
+const updateMovie = async (movies: any) => {
     const updateMovies = await knex('movies')
-        .update
-        ({
-            movie: req.body.movies,
-            year: req.body.year,
-            description: req.body.description,
-            genre: req.body.genre
+        .update({
+            movie: movies.movie,
+            year: movies.year,
+            description: movies.description,
+            genre: movies.genre
         })
-        .where
-        ({
-            "id": req.body.id
+        .where({
+            id: movies.id
         })
         .then((result: any) => {
             return result;
         })
         .catch((err: any) => {
-            console.log(err)
+            console.log(err);
             return false;
-        })
+        });
     return updateMovies;
-}
-const deleteMovie = async (req: any) => {
-    const genresID = req.body.genre_id;
-    const charactersID = req.body.character_id
-    const movieID = req.body.movie_id
-
+};
+const deleteMovie = async (movieID: Number) => {
     const trx = await knex.transaction();
+
     try {
-        const delMovie = await knex("movies")
+        const delMovie = await knex('movies')
             .where({ id: movieID })
             .del()
             .then((result: any) => {
@@ -161,25 +143,22 @@ const deleteMovie = async (req: any) => {
                 console.log(error);
                 throw new Error();
             });
-        genresID.forEach(async (genre_id: any) => {
-            const deleteMovieGenre = await deleteMovieGenres(movieID, genre_id);
-            if (!deleteMovieGenre) {
-                throw new Error();
-            }
-        });
-        charactersID.forEach(async (character_id: any) => {
-            const deleteMovieCharacter = await deleteMovieCharacters(movieID, character_id);
-            if (!deleteMovieCharacter) {
-                throw new Error();
-            }
-        });
+
+        const deleteMovieGenre = await deleteMovieGenres(movieID);
+        if (!deleteMovieGenre) {
+            throw new Error();
+        }
+
+        const deleteMovieCharacter = await deleteMovieCharacters(movieID);
+        if (!deleteMovieCharacter) {
+            throw new Error();
+        }
 
         await trx.commit();
         return true;
-    }
-    catch (ex: unknown) {
+    } catch (ex: unknown) {
         await trx.rollback();
         return false;
     }
-}
+};
 export { getAllMovies, insertMovie, updateMovie, deleteMovie, getMovieByID, verifyIfExistsMovies };
