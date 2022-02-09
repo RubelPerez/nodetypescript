@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,6 +12,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import api from "../api/axiosBase";
+import { useNavigate } from 'react-router-dom';
+
+
+// import { Redirect } from 'react-router'
+
 
 function Copyright(props) {
   return (
@@ -31,15 +37,31 @@ function Copyright(props) {
 const theme = createTheme();
 
 const Index = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     //conexion con la api
+    api
+      .post("login/login", { username, password })
+      .then((result) => {
+        if (result.data.login) {
+          navigate('/movies');
+
+        } else {
+          alert("error");
+        }
+      })
+      .catch((err) => {});
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        {/* {redirect == true ? <Redirect to="/google.com" /> : ""} */}
         <Box
           sx={{
             marginTop: 8,
@@ -69,6 +91,7 @@ const Index = () => {
               name="Username"
               autoComplete="Username"
               autoFocus
+              onChange={(e) => setUsername(e.target.value)}
             />
             <TextField
               margin="normal"
@@ -79,6 +102,7 @@ const Index = () => {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={(e) => setPassword(e.target.value)}
             />
 
             <Button

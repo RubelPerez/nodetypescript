@@ -1,9 +1,8 @@
 import knex from '../config/config';
 
 const insertMovieGenres = async (genre_id: any, movie_id: any) => {
-    const insertMoviesGenres = await knex("movies_genres")
-        .insert
-        ({
+    const insertMoviesGenres = await knex('movies_genres')
+        .insert({
             movies_id: movie_id,
             genres_id: genre_id
         })
@@ -16,16 +15,15 @@ const insertMovieGenres = async (genre_id: any, movie_id: any) => {
         });
     if (insertMoviesGenres) {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
-}
+};
 
 const getMovieGenres = async (movie_id: any) => {
-    const getMovieGenre = await knex("movies_genres")
-        .join("genres", "genres.id", "movies_genres.genres_id")
-        .where({ "movies_genres.movies_id": movie_id })
+    const getMovieGenre = await knex('movies_genres')
+        .join('genres', 'genres.id', 'movies_genres.genres_id')
+        .where({ 'movies_genres.movies_id': movie_id })
         .then((result: any) => {
             return result;
         })
@@ -35,13 +33,12 @@ const getMovieGenres = async (movie_id: any) => {
         });
 
     return getMovieGenre;
-}
+};
 
-const deleteMovieGenres = async (movie_id: any, genre_id: any) => {
-    const deleteMovieGenre = await knex("movies_genres")
+const deleteMovieGenres = async (movie_id: any) => {
+    const deleteMovieGenre = await knex('movies_genres')
         .where({
-            movies_id: movie_id,
-            genres_id: genre_id
+            movies_id: movie_id
         })
         .del()
         .then((result: any) => {
@@ -51,11 +48,6 @@ const deleteMovieGenres = async (movie_id: any, genre_id: any) => {
             console.log(error);
             throw new Error();
         });
-
-    if (deleteMovieGenre) {
-        return true
-    } else {
-        return false;
-    }
-}
+    return true;
+};
 export { insertMovieGenres, getMovieGenres, deleteMovieGenres };
