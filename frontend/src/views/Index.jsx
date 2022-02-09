@@ -48,6 +48,7 @@ const Index = () => {
       .post("login/login", { username, password })
       .then((result) => {
         if (result.data.login) {
+          localStorage.setItem('login', 'true');
           navigate('/movies');
 
         } else {

@@ -16,16 +16,15 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import allIcons from "./../components/AllIcons";
 import ListDashboard from "./../components/ListDashboard";
 import MaterialTable from "material-table";
-import { Button, Dialog, TextareaAutosize, TextField } from "@mui/material";
-import ListItemText from "@mui/material/ListItemText";
-import ListItem from "@mui/material/ListItem";
+import { Button, Dialog,TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import Slide from "@mui/material/Slide";
 import Select from "react-select";
 import api from "../api/axiosBase";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import "./../css/bootstrap.css";
-import { Delete } from "@material-ui/icons";
+import { DeleteForever } from "@material-ui/icons";
+import { useNavigate } from 'react-router-dom';
+
 
 const drawerWidth = 240;
 
@@ -95,7 +94,7 @@ export default function Movies() {
   const [data, setData] = useState([]);
   const [movieGenres, setMovieGenres] = useState([]);
   const [movieCharacters, setMovieCharacters] = useState([]);
-
+  const navigate = useNavigate();
   const changeHandlerMovie = (e) => {
     setMovie({
       ...movie,
@@ -162,9 +161,11 @@ export default function Movies() {
     setOpenDialog(false);
   };
 
-  //api's calls
-  // React.useEffect(() => {});
+
   useEffect(() => {
+    if (localStorage['login'] !== "true") {
+      navigate("/")
+    }
     getMovies();
   }, []);
 
@@ -213,7 +214,7 @@ export default function Movies() {
       .then((result) => {
         setGenres(result.data.getAllGenre);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const getCharacters = () => {
     api.get("/characters/getCharacters").then((result) => {
@@ -331,7 +332,7 @@ export default function Movies() {
                 handleClickOpenEdit(event, rowData.id),
             },
             {
-              icon: () => <VisibilityIcon />,
+              icon: () => <DeleteForever />,
               tooltip: "Eliminar",
               onClick: (event, rowData) => handleClickDelete(event, rowData.id),
             },
@@ -342,7 +343,7 @@ export default function Movies() {
           fullScreen
           open={openDialog}
           onClose={handleClose}
-          //TransitionComponent={Transition}
+        //TransitionComponent={Transition}
         >
           <AppBar sx={{ position: "relative" }}>
             <Toolbar>
