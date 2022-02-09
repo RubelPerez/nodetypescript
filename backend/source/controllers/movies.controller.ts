@@ -9,12 +9,12 @@ const getMoviesController = async (req: Request, res: Response, next: NextFuncti
 };
 
 const insertMoviesController = async (req: Request, res: Response, next: NextFunction) => {
-   
-    const verifyIfExistsMovie = await verifyIfExistsMovies(req);
+    const movie = req.body.movie;
+    const genres = req.body?.selectedGenres;
+    const characters = req.body?.selectedCharacters;
+    const verifyIfExistsMovie = await verifyIfExistsMovies(movie);
     if (verifyIfExistsMovie) {
-        res.send({ msg: 'duplicated Movie' });
-    } else {
-        const insert = await insertMovie(req)
+        const insert = await insertMovie(movie, genres, characters)
             .then((result: any) => {
                 return result;
             })
@@ -27,6 +27,8 @@ const insertMoviesController = async (req: Request, res: Response, next: NextFun
         } else {
             res.send({ msg: 'error' });
         }
+    } else {
+        res.send({ msg: 'duplicated Movie' });
     }
 };
 
@@ -40,7 +42,8 @@ const getMovieByIDController = async (req: Request, res: Response, next: NextFun
 };
 
 const deleteMoviesController = async (req: Request, res: Response, next: NextFunction) => {
-    const deleteMovieDB = await deleteMovie(req);
+    const movie_id = req.body.movie_id;
+    const deleteMovieDB = await deleteMovie(movie_id);
     if (deleteMovieDB) {
         res.send({ msg: 'ok' });
     } else {
@@ -48,12 +51,13 @@ const deleteMoviesController = async (req: Request, res: Response, next: NextFun
     }
 };
 const updateMovieController = async (req: Request, res: Response) => {
-    const verifyMovies = await verifyIfExistsMovies(req);
+    const movie = req.body.movie;
+    const verifyMovies = await verifyIfExistsMovies(movie);
     if (verifyMovies) {
-        res.send({ msg: 'duplicated Movies' });
-    } else {
-        const updateMovies = await updateMovie(req);
+        const updateMovies = await updateMovie(movie);
         res.send({ msg: 'ok' });
+    } else if (!verifyMovies) {
+        res.send({ msg: 'duplicated Movies' });
     }
 };
 export { getMoviesController, insertMoviesController, getMovieByIDController, deleteMoviesController, updateMovieController };
