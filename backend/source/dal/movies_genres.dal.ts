@@ -1,6 +1,6 @@
 import knex from '../config/config';
 
-const insertMovieGenres = async (movie_id: Number, genre_id: Number) => {
+const insertMovieGenres = async (genre_id: Number, movie_id: Number) => {
     const insertMoviesGenres = await knex('movies_genres')
         .insert({
             movies_id: movie_id,
