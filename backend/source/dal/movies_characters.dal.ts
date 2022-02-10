@@ -49,4 +49,21 @@ const deleteMovieCharacters = async (movie_id: any) => {
         });
     return true;
 };
-export { insertMovieCharacters, getMovieCharacters, deleteMovieCharacters };
+
+const deleteMovieCharactersByMovie = async (movie_id: Number, character_id: Number) => {
+    const deleteMovieGenre = await knex('movies_characters')
+        .where({
+            movies_id: movie_id,
+            characters_id: character_id
+        })
+        .del()
+        .then((result: any) => {
+            return result;
+        })
+        .catch((error: any) => {
+            console.log(error);
+            throw new Error();
+        });
+    return true;
+};
+export { insertMovieCharacters, getMovieCharacters, deleteMovieCharacters, deleteMovieCharactersByMovie };

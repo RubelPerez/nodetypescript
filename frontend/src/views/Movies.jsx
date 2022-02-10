@@ -105,7 +105,7 @@ export default function Movies() {
     api
       .put("/movies/updateMovie", { movie: movie })
       .then((result) => {
-        alert(result.data.msg);
+        getMovies();
       })
       .catch((err) => {
         alert(err);
@@ -116,7 +116,7 @@ export default function Movies() {
     api
       .delete("/movies/deleteMovie", { data: { movie_id: id } })
       .then((result) => {
-        alert(result.data.msg);
+        getMovies();
       })
       .catch((err) => {
         alert(err);
@@ -162,7 +162,7 @@ export default function Movies() {
 
   useEffect(() => {
     if (localStorage["login"] !== "true") {
-      // navigate("/");
+      navigate("/");
     }
     getMovies();
   }, []);
@@ -200,7 +200,7 @@ export default function Movies() {
         selectedGenres,
       })
       .then((result) => {
-        alert(result.data.msg);
+        getMovies();
       })
       .catch((err) => {
         alert(err);
@@ -230,6 +230,7 @@ export default function Movies() {
   const handleClickOpenEdit = (e, id) => {
     getMoviesById(id);
     getGenre();
+    getCharacters();
     setOpenEdit(true);
   };
 
@@ -237,20 +238,18 @@ export default function Movies() {
     //insertMovieGenres /modifyMoviesGenres/insertMoviesGenre
     //deletemovieGenres /modifyMoviesGenres/deleteMoviesGenreByMovie
     if (dataTarget.action === "select-option") {
-      alert("select");
       api
         .post("/modifyMoviesGenres/insertMoviesGenre", {
           movie_id: movieData.id,
           genre_id: dataTarget.option.value,
         })
         .then((result) => {
-          alert(result);
+          getMoviesById(movieData.id);
         })
         .catch((err) => {
           alert(err);
         });
     } else if (dataTarget.action === "remove-value") {
-      alert("borrar");
       api
         .delete("/modifyMoviesGenres/deleteMoviesGenreByMovie", {
           data: {
@@ -259,19 +258,46 @@ export default function Movies() {
           },
         })
         .then((result) => {
-          alert(result);
+          getMoviesById(movieData.id);
         })
         .catch((err) => {
           alert(err);
         });
     } else {
-      alert("klk?");
     }
   };
   const handleEditCharacters = (e, dataTarget, movieData) => {
-    console.log("e", e);
-    console.log("dataTarget", dataTarget);
-    console.log("movieData", movieData);
+    //insertMovieCharacters /modifyMoviesCharacters/insertMoviesCharacter
+    //deletemovieCharacters /modifyMoviesCharacters/deleteMoviesCharacterByMovie
+    if (dataTarget.action === "select-option") {
+      api
+        .post("/modifyMoviesCharacters/insertMoviesCharacter", {
+          movie_id: movieData.id,
+          character_id: dataTarget.option.value,
+        })
+        .then((result) => {
+          getMoviesById(movieData.id);
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    } else if (dataTarget.action === "remove-value") {
+      alert("borrar");
+      api
+        .delete("/modifyMoviesCharacters/deleteMoviesCharacterByMovie", {
+          data: {
+            movie_id: movieData.id,
+            character_id: dataTarget.removedValue.value,
+          },
+        })
+        .then((result) => {
+          getMoviesById(movieData.id);
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    } else {
+    }
   };
   const handleCloseEdit = () => {
     setOpenEdit(false);
