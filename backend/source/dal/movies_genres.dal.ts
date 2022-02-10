@@ -1,6 +1,6 @@
 import knex from '../config/config';
 
-const insertMovieGenres = async (genre_id: any, movie_id: any) => {
+const insertMovieGenres = async (movie_id: Number, genre_id: Number) => {
     const insertMoviesGenres = await knex('movies_genres')
         .insert({
             movies_id: movie_id,
@@ -50,4 +50,21 @@ const deleteMovieGenres = async (movie_id: any) => {
         });
     return true;
 };
-export { insertMovieGenres, getMovieGenres, deleteMovieGenres };
+
+const deleteMovieGenresByMovie = async (movie_id: any, genre_id: any) => {
+    const deleteMovieGenre = await knex('movies_genres')
+        .where({
+            movies_id: movie_id,
+            genres_id: genre_id
+        })
+        .del()
+        .then((result: any) => {
+            return result;
+        })
+        .catch((error: any) => {
+            console.log(error);
+            throw new Error();
+        });
+    return true;
+};
+export { insertMovieGenres, getMovieGenres, deleteMovieGenres, deleteMovieGenresByMovie };

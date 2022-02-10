@@ -16,15 +16,14 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import allIcons from "./../components/AllIcons";
 import ListDashboard from "./../components/ListDashboard";
 import MaterialTable from "material-table";
-import { Button, Dialog,TextField } from "@mui/material";
+import { Button, Dialog, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Select from "react-select";
 import api from "../api/axiosBase";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import "./../css/bootstrap.css";
 import { DeleteForever } from "@material-ui/icons";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -161,10 +160,9 @@ export default function Movies() {
     setOpenDialog(false);
   };
 
-
   useEffect(() => {
-    if (localStorage['login'] !== "true") {
-      navigate("/")
+    if (localStorage["login"] !== "true") {
+      // navigate("/");
     }
     getMovies();
   }, []);
@@ -214,7 +212,7 @@ export default function Movies() {
       .then((result) => {
         setGenres(result.data.getAllGenre);
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
   const getCharacters = () => {
     api.get("/characters/getCharacters").then((result) => {
@@ -236,9 +234,39 @@ export default function Movies() {
   };
 
   const handleEditGenres = (e, dataTarget, movieData) => {
-    console.log("e", e);
-    console.log("dataTarget", dataTarget);
-    console.log("movieData", movieData);
+    //insertMovieGenres /modifyMoviesGenres/insertMoviesGenre
+    //deletemovieGenres /modifyMoviesGenres/deleteMoviesGenreByMovie
+    
+    if (dataTarget.action === "select-option") {
+      alert("select")
+      api.post("/modifyMoviesGenres/insertMoviesGenre", {
+          movie_id: movieData.id,
+          genre_id: dataTarget.removedValue.value,
+        })
+        .then((result) => {
+          alert(result);
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    } else if (dataTarget.action === "remove-value") {
+      alert("borrar")
+      api
+        .delete("/modifyMoviesGenres/deleteMoviesGenreByMovie", {
+          data: {
+            movie_id: movieData.id,
+            genre_id: dataTarget.removedValue.value,
+          },
+        })
+        .then((result) => {
+          alert(result);
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    } else {
+      alert("klk?");
+    }
   };
   const handleEditCharacters = (e, dataTarget, movieData) => {
     console.log("e", e);
@@ -343,7 +371,7 @@ export default function Movies() {
           fullScreen
           open={openDialog}
           onClose={handleClose}
-        //TransitionComponent={Transition}
+          //TransitionComponent={Transition}
         >
           <AppBar sx={{ position: "relative" }}>
             <Toolbar>

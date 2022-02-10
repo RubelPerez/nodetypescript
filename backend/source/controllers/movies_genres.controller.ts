@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { insertMovieGenres, getMovieGenres, deleteMovieGenres } from '../dal/movies_genres.dal';
+import { insertMovieGenres, getMovieGenres, deleteMovieGenres, deleteMovieGenresByMovie } from '../dal/movies_genres.dal';
 
 const getMoviesGenresByIDController = async (req: Request, res: Response) => {
     const getMovieGenre = await getMovieGenres(parseInt(req.params.id));
@@ -11,9 +11,10 @@ const getMoviesGenresByIDController = async (req: Request, res: Response) => {
 };
 
 const insertMovieGenresController = async (req: Request, res: Response, next: NextFunction) => {
-    const genre_id: number = req.body.genre_id;
-    const movie_id: number = req.body.movie_id;
-    const insertMovieGenre = await insertMovieGenres(genre_id, movie_id);
+    const { movie_id, genre_id } = req.body;
+    console.log(movie_id)
+    console.log(genre_id)
+    const insertMovieGenre = await insertMovieGenres(movie_id, genre_id);
     if (insertMovieGenre) {
         res.send({ msg: 'ok' });
     } else {
@@ -30,5 +31,12 @@ const deleteMovieGenresController = async (req: Request, res: Response, next: Ne
         res.send({ msg: 'error' });
     }
 };
+const deleteMovieGenresByMovieController = async (req: Request, res: Response) => {
+    const { movie_id, genre_id } = req.body;
+    const deleteMovie = await deleteMovieGenresByMovie(movie_id, genre_id);
+    if (deleteMovie) {
+        res.send({ msg: 'ok' });
+    }
+};
 
-export { insertMovieGenresController, deleteMovieGenresController, getMoviesGenresByIDController };
+export { insertMovieGenresController, deleteMovieGenresController, getMoviesGenresByIDController, deleteMovieGenresByMovieController };
