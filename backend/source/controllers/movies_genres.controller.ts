@@ -12,8 +12,6 @@ const getMoviesGenresByIDController = async (req: Request, res: Response) => {
 
 const insertMovieGenresController = async (req: Request, res: Response, next: NextFunction) => {
     const { movie_id, genre_id } = req.body;
-    console.log(movie_id)
-    console.log(genre_id)
     const insertMovieGenre = await insertMovieGenres(movie_id, genre_id);
     if (insertMovieGenre) {
         res.send({ msg: 'ok' });

@@ -236,12 +236,12 @@ export default function Movies() {
   const handleEditGenres = (e, dataTarget, movieData) => {
     //insertMovieGenres /modifyMoviesGenres/insertMoviesGenre
     //deletemovieGenres /modifyMoviesGenres/deleteMoviesGenreByMovie
-    
     if (dataTarget.action === "select-option") {
-      alert("select")
-      api.post("/modifyMoviesGenres/insertMoviesGenre", {
+      alert("select");
+      api
+        .post("/modifyMoviesGenres/insertMoviesGenre", {
           movie_id: movieData.id,
-          genre_id: dataTarget.removedValue.value,
+          genre_id: dataTarget.option.value,
         })
         .then((result) => {
           alert(result);
@@ -250,7 +250,7 @@ export default function Movies() {
           alert(err);
         });
     } else if (dataTarget.action === "remove-value") {
-      alert("borrar")
+      alert("borrar");
       api
         .delete("/modifyMoviesGenres/deleteMoviesGenreByMovie", {
           data: {
