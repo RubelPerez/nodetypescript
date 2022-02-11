@@ -1,5 +1,5 @@
 // import React, { useState, useEffect } from "react";
-// import MaterialTable from "material-table";
+// import MaterialTable from "@material-table/core";
 // import tableIcons from "../components/AllIcons";
 // import "./../css/bootstrap.css";
 // import VisibilityIcon from "@material-ui/icons/Visibility";

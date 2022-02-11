@@ -14,7 +14,12 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import allIcons from "./../components/AllIcons";
 import ListDashboard from "./../components/ListDashboard";
-import MaterialTable from "material-table";
+import MaterialTable from "@material-table/core";
+import { useState, useEffect } from "react";
+import api from "../api/axiosBase";
+import { DeleteForever } from "@material-ui/icons";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
@@ -62,10 +67,10 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function Casting() {
+const Casting = () => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
-
+  const [data, setData] = useState([]);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -74,6 +79,24 @@ export default function Casting() {
     setOpen(false);
   };
 
+  useEffect(() => {
+    getCasting();
+  }, []);
+
+  const getCasting = () => {
+    api
+      .get("/characters/getCharacters")
+      .then((result) => {
+        if (result.data?.msg !== "error") {
+          setData(result.data.getCharacters);
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  const columns = [{ title: "casting", field: "charac" }];
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -125,14 +148,34 @@ export default function Casting() {
 
         <MaterialTable
           icons={allIcons}
+          data={data}
+          columns={columns}
           options={{
             pageSizeOptions: [5, 10, 15, 20],
             actionsColumnIndex: -1,
             emptyRowsWhenPaging: true,
             // selection:true
           }}
+          actions={[
+            {
+              icon: () => <VisibilityIcon />,
+              tooltip: "Detalles/Editar",
+              onClick: (e, rowData) => {
+                console.log(e, rowData);
+              },
+            },
+            {
+              icon: () => <DeleteForever />,
+              tooltip: "Eliminar",
+              onClick: (e, rowData) => {
+                console.log(e, rowData);
+              },
+            },
+          ]}
         />
       </Main>
     </Box>
   );
-}
+};
+
+export default Casting;

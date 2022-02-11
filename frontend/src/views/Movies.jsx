@@ -15,7 +15,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import allIcons from "./../components/AllIcons";
 import ListDashboard from "./../components/ListDashboard";
-import MaterialTable from "material-table";
+import MaterialTable from "@material-table/core";
 import { Button, Dialog, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Select from "react-select";

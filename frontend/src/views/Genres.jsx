@@ -14,7 +14,12 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import allIcons from "./../components/AllIcons";
 import ListDashboard from "./../components/ListDashboard";
-import MaterialTable from "material-table";
+import MaterialTable from "@material-table/core";
+import { useState, useEffect } from "react";
+import api from "../api/axiosBase";
+import { DeleteForever } from "@material-ui/icons";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
@@ -62,10 +67,10 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function Genres() {
+const Genres = () => {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
-
+  const [open, setOpen] = useState(true);
+  const [data, setData] = useState([]);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -73,6 +78,25 @@ export default function Genres() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    getGenres();
+  }, []);
+
+  const getGenres = () => {
+    api
+      .get("/genres/getGenres")
+      .then((result) => {
+        if (result.data?.msg !== "error") {
+          setData(result.data.getAllGenre);
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  const colums = [{ title: "Genres", field: "genre" }];
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -125,14 +149,35 @@ export default function Genres() {
 
         <MaterialTable
           icons={allIcons}
+          title=""
+          columns={colums}
+          data={data}
           options={{
             pageSizeOptions: [5, 10, 15, 20],
             actionsColumnIndex: -1,
             emptyRowsWhenPaging: true,
             // selection:true
           }}
+          actions={[
+            {
+              icon: () => <VisibilityIcon />,
+              tooltip: "Detalles/Editar",
+              onClick: (e, rowData) => {
+                console.log(e, rowData);
+              },
+            },
+            {
+              icon: () => <DeleteForever />,
+              tooltip: "Eliminar",
+              onClick: (e, rowData) => {
+                console.log(e, rowData);
+              },
+            },
+          ]}
         />
       </Main>
     </Box>
   );
-}
+};
+
+export default Genres;
