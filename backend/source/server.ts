@@ -6,7 +6,10 @@ import modifyCharacters from './routes/movies_characters.route'
 import modifyGenres from './routes/movies_genres.route'
 import genresRoute from './routes/genres.route'
 import charactersRoute from './routes/characters.route'
-const port = 8080
+import dotenv from 'dotenv';
+dotenv.config();
+
+const port = process.env.PORT || 8080
 const app = express();
 
 
