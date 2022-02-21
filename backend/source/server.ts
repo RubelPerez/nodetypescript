@@ -6,6 +6,7 @@ import modifyCharacters from './routes/movies_characters.route'
 import modifyGenres from './routes/movies_genres.route'
 import genresRoute from './routes/genres.route'
 import charactersRoute from './routes/characters.route'
+import pdfRoute from './routes/pdf.route'
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use('/api/modifyMoviesCharacters', modifyCharacters);
 app.use('/api/modifyMoviesGenres', modifyGenres);
 app.use('/api/genres', genresRoute);
 app.use('/api/characters', charactersRoute);
+app.use('/api/documents', pdfRoute);
 /** ERROR CASE*/
 app.use((req: Request, res: Response, next: NextFunction) => {
     const error = new Error('Not found');

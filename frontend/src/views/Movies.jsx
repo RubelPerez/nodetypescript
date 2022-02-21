@@ -212,7 +212,7 @@ export default function Movies() {
       .then((result) => {
         setGenres(result.data.getAllGenre);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const getCharacters = () => {
     api.get("/characters/getCharacters").then((result) => {
@@ -302,6 +302,23 @@ export default function Movies() {
   const handleCloseEdit = () => {
     setOpenEdit(false);
   };
+
+
+  const downloadPDF = () => {
+    api.get("/documents/moviePDF/" + movieData.id)
+      .then(result => {
+        // console.log("hola")
+        console.log(result.data.pdf.data)
+        const url = window.URL.createObjectURL(new Blob([new Uint8Array(result.data.pdf.data).buffer]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'yourcoolpdf.pdf');
+        document.body.appendChild(link);
+        link.click();
+      }).catch(err => {
+        alert(err)
+      })
+  }
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -397,7 +414,7 @@ export default function Movies() {
           fullScreen
           open={openDialog}
           onClose={handleClose}
-          //TransitionComponent={Transition}
+        //TransitionComponent={Transition}
         >
           <AppBar sx={{ position: "relative" }}>
             <Toolbar>
@@ -551,6 +568,9 @@ export default function Movies() {
               handleEditCharacters(e, dataTarget, movieData)
             }
           />
+          <Button
+            onClick={(e) => downloadPDF(e, movieData)}
+          >Descargar PDF</Button>
         </Dialog>
       </Main>
     </Box>
